@@ -1,4 +1,4 @@
-# Simple-Game
+# Space Invaders Clone
 
 ## Requisitos
 
