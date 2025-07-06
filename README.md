@@ -2,10 +2,11 @@
 
 Um clone customizado do jogo Space Invaders
 
-Feito por Getúlio Victor.
+Feito por Getúlio Victor
 
 ## Estrutura do Projeto
 
+```
 space-invaders-clone/
 │
 ├── assets/
@@ -23,6 +24,8 @@ space-invaders-clone/
 │   └── background.py    # Fundo animado (opcional, não usado atualmente)
 │
 └── requirements.txt     # Lista de dependências Python
+```
+
 
 ## Instalação
 
