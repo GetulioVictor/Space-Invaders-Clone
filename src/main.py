@@ -3,6 +3,7 @@ import os
 import sys
 import pygame.gfxdraw
 import settings  # Arquivo separado que armazena configurações
+from game import Game
 
 pygame.init()
 
@@ -18,46 +19,23 @@ small_font = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
 
 # Opções do menu
-menu_options = ["Iniciar Jogo", "Selecionar Fase", "Configurações", "Sair"]
+menu_options = ["Iniciar Jogo", "Configurações", "Sair"]
 selected_option = 0
 
-# Carregar imagem de fundo e fonte personalizada
+# Carregar imagens de fundo e fontes
 base_path = os.path.dirname(__file__)
-background_path = os.path.join(base_path, "../assets/images/Blue_Nebula_01-1024x1024.png")
+background_path = os.path.join(base_path, "../assets/images/Blue_Nebula.png")
 background_img = pygame.image.load(background_path).convert()
 
-# Carregar imagem de fundo do menu de configurações
-config_background_path = os.path.join(base_path, "../assets/images/Purple_Nebula_01-1024x1024.png")
+config_background_path = os.path.join(base_path, "../assets/images/Purple_Nebula.png")
 config_background_img = pygame.image.load(config_background_path).convert()
 
-# Carregar fonte
 font_path = os.path.join(base_path, "../assets/fonts/OpenSans-Bold.ttf")
 title_font = pygame.font.Font(font_path, 60)
 menu_font = pygame.font.Font(font_path, 40)
 
-# Carregar ícones
-icon_user = pygame.image.load("../assets/images/CelestialObjects.png").convert_alpha()
-
-def draw_menu():
-    """Desenha o menu principal com imagem de fundo e nova fonte."""
-    screen.blit(background_img, (0, 0))  # Desenha o fundo
-
-    # Título do jogo
-    title_text = title_font.render("SPACE INVADERS", True, (255, 255, 255))
-    screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 50))
-
-    # Opções de menu
-    for idx, option in enumerate(menu_options):
-        color = (255, 255, 255)
-        if idx == selected_option:
-            color = (255, 0, 0)  # Vermelho se selecionado
-        option_text = menu_font.render(option, True, color)
-        screen.blit(option_text, (SCREEN_WIDTH // 2 - option_text.get_width() // 2, 180 + idx * 60))
-
-    pygame.display.flip()
-
+# Funções auxiliares para barra de volume
 def draw_rounded_rect(surface, rect, color, radius):
-    """Desenha retângulo arredondado com antialiasing."""
     x, y, w, h = rect
     pygame.gfxdraw.aacircle(surface, x + radius, y + radius, radius, color)
     pygame.gfxdraw.filled_circle(surface, x + radius, y + radius, radius, color)
@@ -73,7 +51,6 @@ def draw_rounded_rect(surface, rect, color, radius):
 
     pygame.draw.rect(surface, color, (x + radius, y, w - 2 * radius, h))
     pygame.draw.rect(surface, color, (x, y + radius, w, h - 2 * radius))
-
 
 def draw_volume_bar(screen, x, y, width, height, volume):
     radius = 12
@@ -96,18 +73,14 @@ def draw_volume_bar(screen, x, y, width, height, volume):
         fill_surf = pygame.Surface((fill_width, height), pygame.SRCALPHA)
 
         if volume >= 1.0:
-            # volume cheio: arredondar todos os lados
             draw_rounded_rect(fill_surf, (0, 0, fill_width, height), fill_color, radius)
         else:
-            # volume parcial: só arredondar lado esquerdo
-            # desenha círculos arredondados só do lado esquerdo
             r = radius
             pygame.gfxdraw.aacircle(fill_surf, r, r, r, fill_color)
             pygame.gfxdraw.filled_circle(fill_surf, r, r, r, fill_color)
             pygame.gfxdraw.aacircle(fill_surf, r, height - r - 1, r, fill_color)
             pygame.gfxdraw.filled_circle(fill_surf, r, height - r - 1, r, fill_color)
 
-            # retângulo que cobre o resto do fill_width
             pygame.draw.rect(fill_surf, fill_color, (r, 0, fill_width - r, height))
 
         screen.blit(fill_surf, (x, y))
@@ -117,6 +90,22 @@ def draw_volume_bar(screen, x, y, width, height, volume):
     border_surf = pygame.Surface((width, height), pygame.SRCALPHA)
     draw_rounded_rect(border_surf, (0, 0, width, height), border_color, radius)
     screen.blit(border_surf, (x, y))
+
+
+def draw_menu():
+    screen.blit(background_img, (0, 0))
+
+    title_text = title_font.render("SPACE INVADERS", True, (255, 255, 255))
+    screen.blit(title_text, (SCREEN_WIDTH // 2 - title_text.get_width() // 2, 50))
+
+    for idx, option in enumerate(menu_options):
+        color = (255, 255, 255)
+        if idx == selected_option:
+            color = (255, 0, 0)
+        option_text = menu_font.render(option, True, color)
+        screen.blit(option_text, (SCREEN_WIDTH // 2 - option_text.get_width() // 2, 180 + idx * 60))
+
+    pygame.display.flip()
 
 
 def config_menu():
@@ -147,10 +136,9 @@ def config_menu():
             screen.blit(overlay, (40, 50 + idx * 60))
             screen.blit(config_render, (50, 50 + idx * 60))
 
-        # Desenha a barra de volume logo abaixo do texto "Volume"
         volume = settings.settings['volume']
         bar_x = 50
-        bar_y = 50 + 2 * 60 + 40  # posição vertical um pouco abaixo do 3º texto
+        bar_y = 50 + 2 * 60 + 40
         bar_width = 300
         bar_height = 25
         draw_volume_bar(screen, bar_x, bar_y, bar_width, bar_height, volume)
@@ -211,11 +199,10 @@ while running:
                 case pygame.K_RETURN:
                     match menu_options[selected_option]:
                         case "Iniciar Jogo":
-                            print("Iniciando jogo... (implementar depois)")
-                            # game = Game(screen)
-                            # game.run()
-                        case "Selecionar Fase":
-                            print("Selecionar fase... (implementar depois)")
+                            print("Iniciando jogo...")
+                            game = Game(screen)
+                            last_score = game.run()
+                            settings.settings["last_score"] = last_score
                         case "Configurações":
                             config_menu()
                         case "Sair":
