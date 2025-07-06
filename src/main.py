@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 menu_options = ["Iniciar Jogo", "Configurações", "Sair"]
 selected_option = 0
 
-# Carregar imagens e fontes
+# Carrega as imagens e fontes
 base_path = os.path.dirname(__file__)
 background_img = pygame.image.load(os.path.join(base_path, "../assets/images/Blue_Nebula.png")).convert()
 config_background_img = pygame.image.load(os.path.join(base_path, "../assets/images/Purple_Nebula.png")).convert()
@@ -30,7 +30,7 @@ font_path = os.path.join(base_path, "../assets/fonts/OpenSans-Bold.ttf")
 title_font = pygame.font.Font(font_path, 60)
 menu_font = pygame.font.Font(font_path, 40)
 
-# --- Volume Helpers ---
+# Barra de Volume
 def draw_rounded_rect(surface, rect, color, radius):
     x, y, w, h = rect
     pygame.gfxdraw.aacircle(surface, x + radius, y + radius, radius, color)
@@ -67,7 +67,7 @@ def draw_volume_bar(screen, x, y, width, height, volume):
     screen.blit(border, (x, y))
 
 
-# --- Menu Principal ---
+# Menu Principal
 def draw_menu():
     screen.blit(background_img, (0, 0))
     title = title_font.render("SPACE INVADERS", True, (255, 255, 255))
@@ -80,7 +80,7 @@ def draw_menu():
 
     pygame.display.flip()
 
-# --- Menu de Configurações ---
+# Aba de Configurações
 def config_menu():
     in_config = True
     input_mode = False
@@ -147,7 +147,7 @@ def config_menu():
                             input_mode = True
 
 
-# --- Loop Principal ---
+# Loop Principal
 running = True
 while running:
     clock.tick(60)

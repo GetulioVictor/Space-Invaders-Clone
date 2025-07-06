@@ -1,5 +1,3 @@
-# settings.py
-
 settings = {
     "volume": 0.5,
     "fullscreen": False,

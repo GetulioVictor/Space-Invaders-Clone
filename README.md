@@ -1,17 +1,39 @@
 # Space Invaders Clone
 
-## Requisitos
+Um clone customizado do jogo Space Invaders
 
-- settings.py: Configurações gerais -> tela, cores, velocidade, número de inimigos.
+Feito por Getúlio Victor.
 
-- player.py: Classe que representa a nave do jogador -> movimento e tiros.
+## Estrutura do Projeto
 
-- alien.py: Classe dos inimigos ->  movimentação em grupo, mudança de direção, descida.
+space-invaders-clone/
+│
+├── assets/
+│   ├── images/          # Sprites do jogador, aliens, fundo etc.
+│   └── sounds/          # Sons (.ogg): música, tiro, explosão
+|   └── fonts/           # Fontes (.ttf)
+│
+├── src/
+│   ├── main.py          # Loop principal e menu
+│   ├── game.py          # Lógica do jogo
+│   ├── player.py        # Classe do jogador
+│   ├── alien.py         # Classe dos inimigos
+│   ├── bullet.py        # Tiros do jogador e inimigos
+│   ├── settings.py      # Configurações salvas (nome, volume, pontuação)
+│   └── background.py    # Fundo animado (opcional, não usado atualmente)
+│
+└── requirements.txt     # Lista de dependências Python
 
-- bullet.py: Classe para tiros -> tanto do jogador quanto dos inimigos (se quiser).
+## Instalação
 
-- game.py: Lógica do jogo -> gerencia estados, colisões, pontuação.
+```
+cd space-invaders-clone
 
-- utils.py: Funções auxiliares -> carregar imagens, sons, etc.
+python -m venv venv
+source venv/bin/activate # Linux/macOS
+venv\Scripts\activate    # Windows
 
-- main.py: Loop principal -> eventos, atualização e renderização.
+pip install -r requirements.txt # com o pipx também funciona
+
+python3 src/main.py
+```

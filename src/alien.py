@@ -8,9 +8,9 @@ class Alien(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect(topleft=(x, y))
         self.speed = speed
-        self.direction = 1  # 1 = mover para direita, -1 = mover para esquerda
+        self.direction = 1  # 1 = vai p/ direita, -1 = vai p/ esquerda
         self.shoot_probability = 0.002  # chance de atirar a cada frame
-        self.shoot_cooldown = 2000      # tempo mínimo entre tiros em ms (2 segundos)
+        self.shoot_cooldown = 2000      # tempo mínimo entre tiros em ms (2s)
         self.last_shot_time = 0          # guarda o último tempo que atirou
 
     def update(self):

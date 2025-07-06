@@ -20,25 +20,25 @@ class Game:
         # Caminho base
         base_path = os.path.dirname(__file__)
 
-        # Carregar imagens
+        # Carrega as imagens (player, alien, laser e backgrounds)
         player_image = pygame.image.load(os.path.join(base_path, "../assets/images/player.png")).convert_alpha()
         alien_image = pygame.image.load(os.path.join(base_path, "../assets/images/alien.png")).convert_alpha()
         bullet_image = pygame.image.load(os.path.join(base_path, "../assets/images/bullet.png")).convert_alpha()
         self.background_img = pygame.image.load(os.path.join(base_path, "../assets/images/star.png")).convert()
         self.background_img = pygame.transform.scale(self.background_img, (800, 600))
 
-        # Carregar sons (.ogg)
+        # Carrega os sons
         self.shoot_sound = pygame.mixer.Sound(os.path.join(base_path, "../assets/sounds/shoot.ogg"))
         self.explosion_sound = pygame.mixer.Sound(os.path.join(base_path, "../assets/sounds/explosion.ogg"))
         pygame.mixer.music.load(os.path.join(base_path, "../assets/sounds/music.ogg"))
         pygame.mixer.music.set_volume(settings.settings["volume"])
         pygame.mixer.music.play(-1)  # Loop infinito da música de fundo
 
-        # Criar jogador
+        # Cria o jogador
         self.player = Player(player_image, bullet_image, self.player_bullets)
         self.all_sprites.add(self.player)
 
-        # Criar aliens
+        # Cria os aliens
         for i in range(5):
             for j in range(3):
                 alien = Alien(100 + i * 100, 50 + j * 70, alien_image)
@@ -46,7 +46,7 @@ class Game:
                 self.all_sprites.add(alien)
 
         self.bullet_image = bullet_image
-        settings.settings["last_score"] = 0  # Resetar pontuação
+        settings.settings["last_score"] = 0  # Reseta a pontuação
 
     def run(self):
         while self.running:
@@ -97,7 +97,6 @@ class Game:
         collided_alien = pygame.sprite.spritecollideany(self.player, self.aliens)
         if collided_alien:
             self.player.take_damage()
-            # Opcional: eliminar o alien após colisão
             # collided_alien.kill_alien()
 
         # Fim do jogo
