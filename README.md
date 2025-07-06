@@ -20,9 +20,8 @@ space-invaders-clone/
 │   ├── player.py        # Classe do jogador
 │   ├── alien.py         # Classe dos inimigos
 │   ├── bullet.py        # Tiros do jogador e inimigos
-│   ├── settings.py      # Configurações salvas (nome, volume, pontuação)
-│   └── background.py    # Fundo animado (opcional, não usado atualmente)
-│
+│   └── settings.py      # Configurações salvas (nome, volume, pontuação)
+│   
 └── requirements.txt     # Lista de dependências Python
 ```
 
