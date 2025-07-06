@@ -11,23 +11,30 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        # Grupos
+        # Grupos de sprites
         self.all_sprites = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.player_bullets = pygame.sprite.Group()
         self.alien_bullets = pygame.sprite.Group()
 
-        # Carregar imagens
+        # Caminho base
         base_path = os.path.dirname(__file__)
+
+        # Carregar imagens
         player_image = pygame.image.load(os.path.join(base_path, "../assets/images/player.png")).convert_alpha()
         alien_image = pygame.image.load(os.path.join(base_path, "../assets/images/alien.png")).convert_alpha()
         bullet_image = pygame.image.load(os.path.join(base_path, "../assets/images/bullet.png")).convert_alpha()
-
-        # Carregar fundo star.png e redimensionar para a tela
         self.background_img = pygame.image.load(os.path.join(base_path, "../assets/images/star.png")).convert()
         self.background_img = pygame.transform.scale(self.background_img, (800, 600))
 
-        # Criar jogador (passa grupo de balas para o player)
+        # Carregar sons (.ogg)
+        self.shoot_sound = pygame.mixer.Sound(os.path.join(base_path, "../assets/sounds/shoot.ogg"))
+        self.explosion_sound = pygame.mixer.Sound(os.path.join(base_path, "../assets/sounds/explosion.ogg"))
+        pygame.mixer.music.load(os.path.join(base_path, "../assets/sounds/music.ogg"))
+        pygame.mixer.music.set_volume(settings.settings["volume"])
+        pygame.mixer.music.play(-1)  # Loop infinito da música de fundo
+
+        # Criar jogador
         self.player = Player(player_image, bullet_image, self.player_bullets)
         self.all_sprites.add(self.player)
 
@@ -38,10 +45,8 @@ class Game:
                 self.aliens.add(alien)
                 self.all_sprites.add(alien)
 
-        self.bullet_image = bullet_image  # Para tiros dos aliens
-
-        # Zera a pontuação ao iniciar o jogo
-        settings.settings["last_score"] = 0
+        self.bullet_image = bullet_image
+        settings.settings["last_score"] = 0  # Resetar pontuação
 
     def run(self):
         while self.running:
@@ -50,7 +55,8 @@ class Game:
             self.update()
             self.draw()
 
-        # Ao sair do loop do jogo, retorna a pontuação final
+        self.show_game_over()
+        pygame.mixer.music.stop()
         return settings.settings["last_score"]
 
     def handle_events(self):
@@ -61,16 +67,14 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.player.shoot()
-
+                    self.shoot_sound.play()
         self.player.update(keys)
 
     def update(self):
-        # Atualiza aliens e tenta atirar
         for alien in self.aliens:
             alien.update()
             alien.try_to_shoot(self.alien_bullets, self.bullet_image)
 
-        # Atualiza balas
         self.player_bullets.update()
         self.alien_bullets.update()
 
@@ -80,6 +84,7 @@ class Game:
             if hit:
                 hit.kill_alien()
                 bullet.kill()
+                self.explosion_sound.play()
                 settings.settings["last_score"] += 10
 
         # Colisão: bala do alien atinge player
@@ -88,19 +93,38 @@ class Game:
                 self.player.take_damage()
                 bullet.kill()
 
+        # Colisão: player colide com alien
+        collided_alien = pygame.sprite.spritecollideany(self.player, self.aliens)
+        if collided_alien:
+            self.player.take_damage()
+            # Opcional: eliminar o alien após colisão
+            # collided_alien.kill_alien()
+
         # Fim do jogo
         if self.player.health <= 0:
-            print("Game Over!")
             self.running = False
         if not self.aliens:
-            print("Todos os aliens foram derrotados!")
             self.running = False
 
     def draw(self):
-        # Desenha o fundo antes de desenhar sprites
         self.screen.blit(self.background_img, (0, 0))
-
         self.all_sprites.draw(self.screen)
         self.player_bullets.draw(self.screen)
         self.alien_bullets.draw(self.screen)
         pygame.display.flip()
+
+    def show_game_over(self):
+        font = pygame.font.Font(None, 72)
+        small_font = pygame.font.Font(None, 48)
+
+        game_over_text = font.render("GAME OVER", True, (255, 0, 0))
+        score_text = small_font.render(f"Pontuação: {settings.settings['last_score']}", True, (255, 255, 255))
+        continue_text = small_font.render("Voltando ao menu...", True, (180, 180, 180))
+
+        self.screen.blit(self.background_img, (0, 0))
+        self.screen.blit(game_over_text, (400 - game_over_text.get_width() // 2, 200))
+        self.screen.blit(score_text, (400 - score_text.get_width() // 2, 300))
+        self.screen.blit(continue_text, (400 - continue_text.get_width() // 2, 400))
+
+        pygame.display.flip()
+        pygame.time.delay(3000)
